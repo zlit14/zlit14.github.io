@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no">
     <title>Госуслуги</title>
-    <!-- Иконка для браузера и рабочего стола -->
     <link rel="icon" type="image/png" href="apple-touch-icon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="Госуслуги">
@@ -100,7 +99,25 @@
             40%, 60% { transform: translate3d(8px, 0, 0); }
         }
 
-        /* --- ЭКРАН 3: ПАСПОРТ ОБЛОЖКА --- */
+        /* --- ИМИТАЦИЯ FACE ID (iOS STYLE) --- */
+        #face-id-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3000; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s ease-in-out;
+        }
+        .face-id-box {
+            width: 150px; height: 150px;
+            background: rgba(30, 30, 30, 0.75);
+            border-radius: 18px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #face-id-modal.show .face-id-box { transform: scale(1); }
+        .face-id-box svg { stroke: #fff; width: 56px; height: 56px; margin-bottom: 16px; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+        #face-id-text { color: #fff; font-size: 15px; font-weight: 500; letter-spacing: 0.3px; }
+
+        /* --- ОСТАЛЬНЫЕ ЭКРАНЫ --- */
         #page-summary { background: var(--bg-white); padding-bottom: 34px; }
         .header-main {
             display: flex; align-items: center; justify-content: space-between;
@@ -120,7 +137,6 @@
         .details-link { text-align: center; margin-top: auto; padding-top: 10px; margin-left: -40%; }
         .details-link span { color: var(--blue-accent); font-size: 15px; font-weight: 500; cursor: pointer; }
 
-        /* --- ЭКРАН 4: ПАСПОРТ ДЕТАЛИ --- */
         #page-details { padding-bottom: 34px; }
         .details-header {
             display: flex; align-items: center; justify-content: space-between;
@@ -142,7 +158,6 @@
         .faq-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; padding-left: 16px; }
         .faq-link { display: block; color: var(--blue-accent); text-decoration: none; font-size: 15px; margin-bottom: 16px; }
 
-        /* --- ЭКРАН 5: ПРОСМОТР ФОТО --- */
         #page-viewer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff; z-index: 2000; flex-direction: column; display: none; padding-bottom: 0;
@@ -192,7 +207,8 @@
                 <button class="key-btn" onclick="pressPin(9)">9</button>
                 <button class="key-btn text-btn" onclick="noConnection()">Выйти</button>
                 <button class="key-btn" onclick="pressPin(0)">0</button>
-                <button class="key-btn" onclick="noConnection()">
+                <!-- ИКОНКА FACE ID (ВЫЗЫВАЕТ АНИМАЦИЮ) -->
+                <button class="key-btn" onclick="triggerFaceID()">
                     <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 8V5c0-1.1.9-2 2-2h3"></path>
                         <path d="M16 3h3c1.1 0 2 .9 2 2v3"></path>
@@ -208,7 +224,25 @@
         </div>
     </div>
 
-    <!-- === ЭКРАН 1: ГЛАВНАЯ (КАРТИНКА) === -->
+    <!-- === ФЕЙКОВЫЙ FACE ID MODAL === -->
+    <div id="face-id-modal">
+        <div class="face-id-box">
+            <svg id="face-id-icon" viewBox="0 0 24 24">
+                <!-- Дефолтное лицо Face ID -->
+                <path d="M5 8V5c0-1.1.9-2 2-2h3"></path>
+                <path d="M16 3h3c1.1 0 2 .9 2 2v3"></path>
+                <path d="M19 16v3c0 1.1-.9 2-2 2h-3"></path>
+                <path d="M8 21H5c-1.1 0-2-.9-2-2v-3"></path>
+                <path d="M9 10h.01"></path>
+                <path d="M15 10h.01"></path>
+                <path d="M12 11v3"></path>
+                <path d="M10 16c.5.6 1.2 1 2 1s1.5-.4 2-1"></path>
+            </svg>
+            <div id="face-id-text">Face ID</div>
+        </div>
+    </div>
+
+    <!-- === ОСТАЛЬНЫЕ ЭКРАНЫ === -->
     <div id="page-main" class="page" style="padding: 0;">
         <div style="position: relative; width: 100%;">
             <img src="main.png" alt="Главная" style="width: 100%; display: block;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'800\'><rect width=\'100%\' height=\'100%\' fill=\'%23f0f0f0\'/><text x=\'50%\' y=\'50%\' fill=\'%23000\' text-anchor=\'middle\'>Положите main.png в папку</text></svg>'">
@@ -219,7 +253,6 @@
         </div>
     </div>
 
-    <!-- === ЭКРАН 2: ДОКУМЕНТЫ (КАРТИНКА) === -->
     <div id="page-docs" class="page" style="padding: 0;">
         <div style="position: relative; width: 100%;">
             <img src="docs.jpg" alt="Документы" style="width: 100%; display: block;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'800\'><rect width=\'100%\' height=\'100%\' fill=\'%23e5e5ea\'/><text x=\'50%\' y=\'50%\' fill=\'%23000\' text-anchor=\'middle\'>Положите docs.jpg в папку</text></svg>'">
@@ -229,7 +262,6 @@
         </div>
     </div>
 
-    <!-- === ЭКРАН 6: ПРОФИЛЬ (КАРТИНКА) === -->
     <div id="page-profile" class="page" style="padding: 0;">
         <div style="position: relative; width: 100%;">
             <img src="profile.png" alt="Профиль" style="width: 100%; display: block;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'800\'><rect width=\'100%\' height=\'100%\' fill=\'%23f4f4f4\'/><text x=\'50%\' y=\'50%\' fill=\'%23000\' text-anchor=\'middle\'>Положите profile.png в папку</text></svg>'">
@@ -238,7 +270,6 @@
         </div>
     </div>
 
-    <!-- === ЭКРАН 3: ПАСПОРТ ОБЛОЖКА === -->
     <div id="page-summary" class="page">
         <div class="header-main">
             <button class="icon-btn" style="color: var(--text-gray);" onclick="navTo('page-docs')">
@@ -254,7 +285,6 @@
 
         <div class="card-wrapper">
             <img src="bg.jpg" alt="Фон паспорта" class="card-bg-image">
-
             <div class="card-overlay">
                 <div class="card-top-section">
                     <div>
@@ -298,7 +328,6 @@
                         <div class="overlay-label">Место рождения</div>
                         <div class="overlay-value" style="font-size: 12px; padding-right: 10px;">ГОР. НИЖНЕВАРТОВСК ХАНТЫ-МАНСИЙСКИЙ АВТОНОМ. ОКР. - ЮГРА ТЮМЕНСКАЯ ОБЛАСТЬ РОССИЯ</div>
                     </div>
-
                     <div class="details-link">
                         <span onclick="navTo('page-details')">детали документа</span>
                     </div>
@@ -307,7 +336,6 @@
         </div>
     </div>
 
-    <!-- === ЭКРАН 4: ПАСПОРТ ДЕТАЛИ === -->
     <div id="page-details" class="page">
         <div class="details-header">
             <button class="icon-btn" onclick="navTo('page-summary')" style="color: var(--blue-accent);">
@@ -316,7 +344,6 @@
             <h1>Паспорт РФ</h1>
             <div style="width: 44px;"></div>
         </div>
-
         <div class="details-content">
             <div class="info-box">
                 <div class="info-row"><div class="info-label">ФИО</div><div class="info-val">Литвиненко Захар Андреевич</div></div>
@@ -328,7 +355,6 @@
                 <div class="info-row"><div class="info-label">Код подразделения</div><div class="info-val">860-004</div></div>
                 <div class="info-row"><div class="info-label">Кем выдан</div><div class="info-val">УМВД РОССИИ ПО ХАНТЫ-МАНСИЙСКОМУ АВТОНОМНОМУ ОКРУГУ - ЮГРЕ</div></div>
             </div>
-
             <div class="info-box" id="scans-container">
                 <div class="scans-header">
                     <span class="scans-title">Фото, сканы или pdf</span>
@@ -343,9 +369,7 @@
                     <img src="3.png" class="scan-item" onclick="openViewer(this)">
                 </div>
             </div>
-
             <button class="btn-share" onclick="noConnection()">Поделиться</button>
-
             <h2 class="faq-title">Популярные вопросы</h2>
             <div class="info-box">
                 <a href="javascript:void(0)" class="faq-link" onclick="noConnection()">В каких случаях меняют паспорт</a>
@@ -354,7 +378,6 @@
         </div>
     </div>
 
-    <!-- === ЭКРАН 5: ПРОСМОТР ФОТО (Галерея сканов) === -->
     <div id="page-viewer">
         <div class="viewer-header">
             <button class="icon-btn" onclick="closeViewer()" style="color: var(--blue-accent);">
@@ -366,20 +389,16 @@
             </div>
             <div style="width: 44px;"></div>
         </div>
-
         <div class="v-content">
             <img src="" id="full-image" class="v-img">
         </div>
-
         <div class="viewer-footer">
             <svg onclick="actionShare()" class="icon-btn" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--blue-accent)" stroke-width="2" stroke-linecap="round">
                 <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>
             </svg>
-
             <svg onclick="actionDelete()" class="icon-btn" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--blue-accent)" stroke-width="2" stroke-linecap="round">
                 <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
             </svg>
-
             <svg onclick="actionDownload()" class="icon-btn" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--blue-accent)" stroke-width="2" stroke-linecap="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
@@ -420,16 +439,13 @@
             enteredPin += num;
             updateDots();
 
-            // Если ввели 4 цифры, проверяем пин-код
             if (enteredPin.length === 4) {
-                // Небольшая задержка, чтобы пользователь успел увидеть закрашивание 4-й точки
                 setTimeout(() => {
                     if (enteredPin === CORRECT_PIN) {
-                        navTo('page-main'); // Переход на главную
-                        enteredPin = "";    // Сброс на будущее
+                        navTo('page-main');
+                        enteredPin = "";
                         updateDots();
                     } else {
-                        // Ошибка: трясем точки и очищаем ввод
                         const dotsContainer = document.getElementById('pin-dots');
                         dotsContainer.classList.add('shake');
                         setTimeout(() => {
@@ -441,6 +457,50 @@
                 }, 100);
             }
         }
+    }
+
+    // --- ЛОГИКА ИМИТАЦИИ FACE ID ---
+    function triggerFaceID() {
+        const modal = document.getElementById('face-id-modal');
+        const icon = document.getElementById('face-id-icon');
+
+        // 1. Показываем дефолтную иконку Face ID
+        icon.innerHTML = `
+            <path d="M5 8V5c0-1.1.9-2 2-2h3"></path>
+            <path d="M16 3h3c1.1 0 2 .9 2 2v3"></path>
+            <path d="M19 16v3c0 1.1-.9 2-2 2h-3"></path>
+            <path d="M8 21H5c-1.1 0-2-.9-2-2v-3"></path>
+            <path d="M9 10h.01"></path>
+            <path d="M15 10h.01"></path>
+            <path d="M12 11v3"></path>
+            <path d="M10 16c.5.6 1.2 1 2 1s1.5-.4 2-1"></path>
+        `;
+
+        // 2. Включаем модальное окно с плавным появлением
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('show');
+            modal.style.opacity = '1';
+        }, 10);
+
+        // 3. Ждем 1.2 секунды (имитация сканирования), затем меняем иконку на галочку
+        setTimeout(() => {
+            icon.innerHTML = `
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"></circle>
+                <path d="M8 12.5l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            `;
+
+            // 4. Ждем еще 0.6 секунды, чтобы пользователь увидел галочку, и прячем окно
+            setTimeout(() => {
+                modal.style.opacity = '0';
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    navTo('page-main'); // Выполняем вход!
+                }, 200); // время затухания opacity
+            }, 600);
+
+        }, 1200); // время имитации сканирования
     }
 
     // --- ПРОСМОТР И УПРАВЛЕНИЕ ФОТО ---
